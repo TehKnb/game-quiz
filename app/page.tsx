@@ -16,7 +16,6 @@ export default function Page() {
   const currentQuestion = quizData[currentIndex];
   const currentQuestionNumber = currentIndex + 1;
 
-  // ✅ правильні
   const correctCount = useMemo(() => {
     return quizData.reduce((total, question) => {
       const userAnswer = answers[question.id];
@@ -25,7 +24,6 @@ export default function Page() {
     }, 0);
   }, [answers]);
 
-  // ❌ неправильні
   const wrongCount = useMemo(() => {
     return quizData.reduce((total, question) => {
       const userAnswer = answers[question.id];
@@ -34,11 +32,8 @@ export default function Page() {
     }, 0);
   }, [answers]);
 
-  // клік по відповіді
   const handleAnswer = (answer: AnswerNumber) => {
     const questionId = currentQuestion.id;
-
-    // ❗ не даємо перевибрати
     if (answers[questionId]) return;
 
     setAnswers((prev) => ({
@@ -47,17 +42,17 @@ export default function Page() {
     }));
   };
 
-  // далі
   const handleNext = () => {
     if (currentIndex < totalQuestions - 1) {
       setCurrentIndex((prev) => prev + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
-  // назад
   const handlePrev = () => {
     if (currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -65,9 +60,8 @@ export default function Page() {
 
   return (
     <main className="min-h-screen bg-[#f5f5f5] px-4 py-8">
-      <div className="mx-auto flex w-full max-w-[920px] flex-col gap-6">
-        {/* 🔵 ШАПКА */}
-        <div className="sticky top-[10px] z-50">
+      <div className="mx-auto w-full max-w-[920px]">
+        <div className="sticky top-[10px] z-50 mb-6">
           <QuizHeader
             currentQuestion={currentQuestionNumber}
             totalQuestions={totalQuestions}
@@ -76,9 +70,7 @@ export default function Page() {
           />
         </div>
 
-        {/* 🧠 КАРТКА ПИТАННЯ */}
         <QuizQuestionCard
-          questionNumber={currentQuestionNumber}
           totalQuestions={totalQuestions}
           questionData={currentQuestion}
           selectedAnswer={selectedAnswer}

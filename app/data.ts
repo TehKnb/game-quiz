@@ -10,7 +10,7 @@ export type QuizQuestion = {
 export const quizData: QuizQuestion[] = [
   {
     id: 1,
-    question: "Ви вирішили піти у відпустку на місяць і вимкнути телефон. Що станеться з вашою справою?",
+    question: "1. Ви вирішили піти у відпустку на місяць і вимкнути телефон. Що станеться з вашою справою?",
     correctAnswer: 2,
     options: [
       "Процеси сповільняться, але бізнес виживе.",
@@ -28,7 +28,7 @@ export const quizData: QuizQuestion[] = [
   },
   {
     id: 2,
-    question: "Яка ваша головна роль у компанії на даний момент?",
+    question: "2. Яка ваша головна роль у компанії на даний момент?",
     correctAnswer: 1,
     options: [
       "Архітектор системи та стратег.",
@@ -46,7 +46,7 @@ export const quizData: QuizQuestion[] = [
   },
   {
     id: 3,
-    question: "Як ви ставитеся до найму нових працівників?",
+    question: "3. Як ви ставитеся до найму нових працівників?",
     correctAnswer: 3,
     options: [
       "Наймаю тільки тоді, коли вже зовсім не встигаю.",
@@ -64,7 +64,7 @@ export const quizData: QuizQuestion[] = [
   },
   {
     id: 4,
-    question: "Хто є «носієм» знань про те, як працює ваш бізнес?",
+    question: "4. Хто є «носієм» знань про те, як працює ваш бізнес?",
     correctAnswer: 1,
     options: [
       "Написані інструкції, регламенти та скрипти.",
@@ -82,7 +82,7 @@ export const quizData: QuizQuestion[] = [
   },
   {
     id: 5,
-    question: "Що ви робите з отриманим прибутком?",
+    question: "5. Що ви робите з отриманим прибутком?",
     correctAnswer: 3,
     options: [
       "Витрачаю на власні потреби та закриття боргів.",
@@ -100,7 +100,7 @@ export const quizData: QuizQuestion[] = [
   },
   {
     id: 6,
-    question: "Як ви реагуєте на помилку підлеглого?",
+    question: "6. Як ви реагуєте на помилку підлеглого?",
     correctAnswer: 4,
     options: [
       "Роблю вигляд, що нічого не сталося, аби не було конфлікту.",
@@ -118,7 +118,7 @@ export const quizData: QuizQuestion[] = [
   },
   {
     id: 7,
-    question: "Ваш ідеальний робочий день — це...",
+    question: "7. Ваш ідеальний робочий день — це...",
     correctAnswer: 1,
     options: [
       "...коли я провів стратегічну сесію та знайшов нові ринки.",
@@ -136,7 +136,7 @@ export const quizData: QuizQuestion[] = [
   },
   {
     id: 8,
-    question: "Яка ваша мета на найближчі 3 роки?",
+    question: "8. Яка ваша мета на найближчі 3 роки?",
     correctAnswer: 3,
     options: [
       "Просто стабільно заробляти на життя.",
@@ -154,7 +154,7 @@ export const quizData: QuizQuestion[] = [
   },
   {
     id: 9,
-    question: "Як ви залучаєте клієнтів?",
+    question: "9. Як ви залучаєте клієнтів?",
     correctAnswer: 2,
     options: [
       "Тільки «сарафанне радіо», на рекламу немає часу.",
@@ -172,7 +172,7 @@ export const quizData: QuizQuestion[] = [
   },
   {
     id: 10,
-    question: "Коли ви думаєте про конкурентів, ви відчуваєте...",
+    question: "10. Коли ви думаєте про конкурентів, ви відчуваєте...",
     correctAnswer: 4,
     options: [
       "...страх, що вони заберуть моїх клієнтів.",
@@ -190,7 +190,7 @@ export const quizData: QuizQuestion[] = [
   },
   {
     id: 11,
-    question: "Як ви визначаєте ціну на свої послуги/товари?",
+    question: "11. Як ви визначаєте ціну на свої послуги/товари?",
     correctAnswer: 2,
     options: [
       "Оцінюю платоспроможність клієнта по його вигляду.",
@@ -208,7 +208,7 @@ export const quizData: QuizQuestion[] = [
   },
   {
     id: 12,
-    question: "Що ви робите, коли в бізнесі стається криза?",
+    question: "12. Що ви робите, коли в бізнесі стається криза?",
     correctAnswer: 2,
     options: [
       "Звільняю всіх і чекаю кращих часів.",
@@ -226,7 +226,7 @@ export const quizData: QuizQuestion[] = [
   },
   {
     id: 13,
-    question: "Ви отримали дуже велике замовлення, з яким не впораєтесь самі. Ваші дії?",
+    question: "13. Ви отримали дуже велике замовлення, з яким не впораєтесь самі. Ваші дії?",
     correctAnswer: 3,
     options: [
       "Відмовлюся, бо якість постраждає.",
@@ -244,7 +244,7 @@ export const quizData: QuizQuestion[] = [
   },
   {
     id: 14,
-    question: "Чи ведете ви фінансовий облік (P&L, CashFlow)?",
+    question: "14. Чи ведете ви фінансовий облік (P&L, CashFlow)?",
     correctAnswer: 4,
     options: [
       "Ні, я приблизно знаю, скільки грошей у кишені.",
@@ -262,7 +262,7 @@ export const quizData: QuizQuestion[] = [
   },
   {
     id: 15,
-    question: "Як ви ставитеся до автоматизації (CRM, чат-боти тощо)?",
+    question: "15. Як ви ставитеся до автоматизації (CRM, чат-боти тощо)?",
     correctAnswer: 3,
     options: [
       "Це лише для великих корпорацій.",
@@ -280,7 +280,7 @@ export const quizData: QuizQuestion[] = [
   },
   {
     id: 16,
-    question: "Чи є у вас команда, на яку можна покластися?",
+    question: "16. Чи є у вас команда, на яку можна покластися?",
     correctAnswer: 3,
     options: [
       "Ні, я працюю один.",
@@ -298,7 +298,7 @@ export const quizData: QuizQuestion[] = [
   },
   {
     id: 17,
-    question: "Яка ваша реакція на нову ідею?",
+    question: "17. Яка ваша реакція на нову ідею?",
     correctAnswer: 3,
     options: [
       "Боюся впроваджувати щось нове, щоб не зіпсувати те, що є.",
@@ -316,7 +316,7 @@ export const quizData: QuizQuestion[] = [
   },
   {
     id: 18,
-    question: "Де ви берете мотивацію для роботи?",
+    question: "18. Де ви берете мотивацію для роботи?",
     correctAnswer: 1,
     options: [
       "Від результатів зростання компанії та прибутку.",
@@ -334,7 +334,7 @@ export const quizData: QuizQuestion[] = [
   },
   {
     id: 19,
-    question: "Ваш бізнес — це...",
+    question: "19. Ваш бізнес — це...",
     correctAnswer: 2,
     options: [
       "...спосіб моєї самореалізації як спеціаліста.",
@@ -352,7 +352,7 @@ export const quizData: QuizQuestion[] = [
   },
   {
     id: 20,
-    question: "Що ви будете робити, якщо бізнес почне приносити в 5 разів більше грошей?",
+    question: "20. Що ви будете робити, якщо бізнес почне приносити в 5 разів більше грошей?",
     correctAnswer: 1,
     options: [
       "Знайду сильного топ-менеджера, щоб вийти з операційки.",

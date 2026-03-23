@@ -73,10 +73,6 @@ export default function QuizQuestionCard({
   return (
     <section className="rounded-[24px] bg-white p-7 shadow-[0_10px_30px_rgba(15,23,42,0.06)]">
       <div className="mb-6 flex items-start gap-3">
-        <div className="text-[30px] font-bold leading-none text-[#111827]">
-          {questionNumber}.
-        </div>
-
         <h2 className="m-0 text-[30px] font-semibold leading-[1.3] text-[#111827]">
           {questionData.question}
         </h2>

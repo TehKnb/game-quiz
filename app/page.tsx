@@ -61,7 +61,7 @@ export default function Page() {
   return (
     <main className="min-h-screen bg-[#f5f5f5] px-4 py-8">
       <div className="mx-auto w-full max-w-[920px]">
-        <div className="sticky top-[10px] z-50 mb-6">
+        <div className="fixed top-[10px] left-1/2 z-50 w-full max-w-[920px] -translate-x-1/2 px-4">
           <QuizHeader
             currentQuestion={currentQuestionNumber}
             totalQuestions={totalQuestions}
@@ -70,16 +70,18 @@ export default function Page() {
           />
         </div>
 
-        <QuizQuestionCard
-          totalQuestions={totalQuestions}
-          questionData={currentQuestion}
-          selectedAnswer={selectedAnswer}
-          onAnswer={handleAnswer}
-          onNext={handleNext}
-          onPrev={handlePrev}
-          isFirstQuestion={currentIndex === 0}
-          isLastQuestion={currentIndex === totalQuestions - 1}
-        />
+        <div className="pt-[90px]">
+          <QuizQuestionCard
+            totalQuestions={totalQuestions}
+            questionData={currentQuestion}
+            selectedAnswer={selectedAnswer}
+            onAnswer={handleAnswer}
+            onNext={handleNext}
+            onPrev={handlePrev}
+            isFirstQuestion={currentIndex === 0}
+            isLastQuestion={currentIndex === totalQuestions - 1}
+          />
+        </div>
       </div>
     </main>
   );

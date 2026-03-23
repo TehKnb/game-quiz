@@ -14,7 +14,6 @@ type QuizQuestion = {
 };
 
 type QuizQuestionCardProps = {
-  questionNumber: number;
   totalQuestions: number;
   questionData: QuizQuestion;
   selectedAnswer: AnswerNumber | null;
@@ -28,7 +27,6 @@ type QuizQuestionCardProps = {
 const optionLetters = ["А.", "Б.", "В.", "Г."];
 
 export default function QuizQuestionCard({
-  questionNumber,
   questionData,
   selectedAnswer,
   onAnswer,

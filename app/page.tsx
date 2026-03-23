@@ -61,7 +61,7 @@ export default function Page() {
   return (
     <main className="min-h-screen bg-[#f5f5f5] px-4 py-8">
       <div className="mx-auto w-full max-w-[920px]">
-        <div className="fixed top-[10px] left-1/2 z-50 w-full max-w-[920px] -translate-x-1/2 px-4">
+        <div className="fixed top-[5px] left-1/2 z-50 w-full max-w-[920px] -translate-x-1/2 px-4">
           <QuizHeader
             currentQuestion={currentQuestionNumber}
             totalQuestions={totalQuestions}

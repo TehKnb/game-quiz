@@ -70,7 +70,7 @@ export default function Page() {
           />
         </div>
 
-        <div className="pt-[25px]">
+        <div className="pt-[10px]">
           <QuizQuestionCard
             totalQuestions={totalQuestions}
             questionData={currentQuestion}

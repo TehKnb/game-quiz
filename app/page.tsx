@@ -59,7 +59,7 @@ export default function Page() {
   const selectedAnswer = answers[currentQuestion.id] ?? null;
 
   return (
-    <main className="min-h-screen bg-[#f5f5f5] px-4 py-8">
+    <main className="min-h-screen bg-[#f5f5f5] px-4 py-2">
       <div className="mx-auto w-full max-w-[920px]">
         <div className="pt-[5px]">
           <QuizHeader

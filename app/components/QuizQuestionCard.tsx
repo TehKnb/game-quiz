@@ -93,10 +93,12 @@ export default function QuizQuestionCard({
               disabled={isAnswered}
               className={[
                 "w-full rounded-[18px] px-5 py-5 text-left transition",
-                "bg-[#f3f4f6]",
+                state === "correct"
+                  ? "bg-[#dff3e5]"
+                  : state === "wrong"
+                  ? "bg-[#f9e3e3]"
+                  : "bg-[#f3f4f6]",
                 !isAnswered ? "hover:bg-[#e5e7eb]" : "",
-                state === "correct" ? "bg-[#dff3e5]" : "",
-                state === "wrong" ? "bg-[#f9e3e3]" : "",
                 isAnswered ? "cursor-default" : "cursor-pointer",
               ].join(" ")}
             >
@@ -134,7 +136,7 @@ export default function QuizQuestionCard({
       <div className="mt-6">
         <button
           type="button"
-          className="inline-flex items-center gap-2 text-[18px] text-[#374151]"
+          className="inline-flex items-center gap-2 rounded-[10px] px-2 py-1 text-[18px] text-[#374151] transition hover:bg-[#f3f4f6]"
           onClick={() => setIsHintOpen((prev) => !prev)}
         >
           <span>Показати підказку</span>

@@ -75,7 +75,7 @@ export default function QuizQuestionCard({
   };
 
   return (
-    <section className="rounded-[24px] bg-transparent p-2 shadow-none">
+    <section className="rounded-[24px] bg-transparent p-7 shadow-none">
       <div className="mb-6 flex items-start gap-3">
         <h2 className="m-0 text-[30px] font-semibold leading-[1.3] text-[#111827]">
           {questionData.question}

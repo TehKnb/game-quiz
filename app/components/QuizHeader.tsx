@@ -12,7 +12,7 @@ export default function QuizHeader({
   wrongCount,
 }: QuizHeaderProps) {
   return (
-    <section className="flex items-center gap-4 rounded-[16px] bg-white px-5 py-4">
+    <section className="flex items-center gap-4 rounded-[16px] bg-transparent px-[10px] py-[8px]">
       <div className="grid flex-1 grid-cols-20 gap-[2px]">
         {Array.from({ length: totalQuestions }, (_, index) => {
             const questionNumber = index + 1;

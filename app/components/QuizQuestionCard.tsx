@@ -73,9 +73,9 @@ export default function QuizQuestionCard({
   };
 
   return (
-    <section className="rounded-[24px] bg-transparent p-7 shadow-none">
+    <section className="rounded-[24px] bg-transparent px-2 py-4 shadow-none sm:p-7">
       <div className="mb-6 flex items-start gap-3">
-        <h2 className="m-0 text-[30px] font-semibold leading-[1.3] text-[#111827]">
+        <h2 className="m-0 text-[22px] font-semibold leading-[1.3] text-[#111827] sm:text-[30px]">
           {questionData.question}
         </h2>
       </div>
@@ -94,7 +94,7 @@ export default function QuizQuestionCard({
               onClick={() => handleAnswerClick(answerNumber)}
               disabled={isAnswered}
               className={[
-                "w-full rounded-[18px] px-5 py-5 text-left transition",
+                "w-full rounded-[18px] px-3 py-4 text-left transition sm:px-5 sm:py-5",
                 state === "correct"
                   ? "bg-[#dff3e5]"
                   : state === "wrong"
@@ -104,12 +104,12 @@ export default function QuizQuestionCard({
                 isAnswered ? "cursor-default" : "cursor-pointer",
               ].join(" ")}
             >
-              <div className="flex items-start gap-3.5">
-                <div className="min-w-[28px] text-[18px] font-medium leading-[1.5] text-[#374151]">
+              <div className="flex items-start gap-2.5 sm:gap-3.5">
+                <div className="min-w-[24px] text-[16px] font-medium leading-[1.5] text-[#374151] sm:min-w-[28px] sm:text-[18px]">
                   {optionLetters[index]}
                 </div>
 
-                <div className="text-[18px] font-normal leading-[1.5] text-[#1f2937]">
+                <div className="text-[16px] font-normal leading-[1.5] text-[#1f2937] sm:text-[18px]">
                   {option}
                 </div>
               </div>

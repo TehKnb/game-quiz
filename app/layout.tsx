@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Квіз - Кон$ на Бі$",
-  description: "Отримайте персоналізовану стратегію росту",
+  title: "Гра - Який ви підприємець?",
+  description: "",
 };
 
 export default function RootLayout({

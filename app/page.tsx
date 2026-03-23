@@ -1,697 +1,93 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { questions, videoDatabase, Question, infoScreens } from './data';
-import { buildFlow, getQuestionProgress } from './flow';
-import { QuestionChoiceMobile } from './QuestionChoiceMobile';
-import { QuestionMultipleCentered } from './QuestionMultipleCentered';
-import { QuestionChoiceCentered } from './QuestionChoiceCentered';
-import { QuestionTextCentered } from './QuestionTextCentered';
-import { QuestionChoiceCards } from './QuestionChoiceCards';
-import { cardQuestions } from './data';
-import { ContactRenderer } from './ContactRenderer';
-import { ResultRenderer } from './ResultRenderer';
-import { LoadingRenderer } from './LoadingRenderer';
-import { QuizLayout  } from './components/QuizLayout';
-import { ResultStaticView } from './ResultStaticView';
-import { InfoScreenCentered } from './InfoScreenCentered';
+import { useMemo, useState } from "react";
+import QuizHeader from "./components/QuizHeader";
+import QuizQuestionCard from "./components/QuizQuestionCard";
+import { quizData } from "./data";
 
+type AnswerNumber = 1 | 2 | 3 | 4;
+type UserAnswers = Record<number, AnswerNumber>;
 
+export default function Page() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [answers, setAnswers] = useState<UserAnswers>({});
 
+  const totalQuestions = quizData.length;
+  const currentQuestion = quizData[currentIndex];
+  const currentQuestionNumber = currentIndex + 1;
 
-/* ===================== TYPES ===================== */
+  // ✅ правильні
+  const correctCount = useMemo(() => {
+    return quizData.reduce((total, question) => {
+      const userAnswer = answers[question.id];
+      if (!userAnswer) return total;
+      return userAnswer === question.correctAnswer ? total + 1 : total;
+    }, 0);
+  }, [answers]);
 
-type Step = 'quiz' | 'contact' | 'loading' | 'result';
-type AnswerValue = string | string[];
+  // ❌ неправильні
+  const wrongCount = useMemo(() => {
+    return quizData.reduce((total, question) => {
+      const userAnswer = answers[question.id];
+      if (!userAnswer) return total;
+      return userAnswer !== question.correctAnswer ? total + 1 : total;
+    }, 0);
+  }, [answers]);
 
-type ImpactWeek = {
-  week: number;
-  impactScore: number;
-  reason: string;
-};
+  // клік по відповіді
+  const handleAnswer = (answer: AnswerNumber) => {
+    const questionId = currentQuestion.id;
 
-type ImpactResult = {
-  weeksImpact: ImpactWeek[];
-  topWeeks: number[];
-  summary: string;
-};
-
-type ResultData = {
-  sellingText: string;
-  video: any;
-  impact?: ImpactResult;
-};
-
-type UtmParams = {
-  utm_source?: string;
-  utm_medium?: string;
-  utm_campaign?: string;
-  utm_content?: string;
-  utm_term?: string;
-};
-
-type LoadingStage = {
-  title: string;
-  progress: number;
-};
-
-/* ===================== COMPONENT ===================== */
-
-
-export default function Home() {
-  /* ---------- CORE STATE ---------- */
-
-  const [step, setStep] = useState<Step>('quiz');
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
-  const [resultData, setResultData] = useState<ResultData | null>(null);
-
-  /* ---------- CONTACT ---------- */
-
-  const [contactForm, setContactForm] = useState({
-    name: '',
-    city: '',
-    phone: '',
-  });
-
-  /* ---------- META ---------- */
-
-  const [utmParams, setUtmParams] = useState<UtmParams>({});
-  const [quizUrl, setQuizUrl] = useState('');
-
-  /* ---------- INTERNAL ---------- */
-
-  const autoNextTimeout = useRef<number | null>(null);
-  const leadSentRef = useRef(false);
-
-  /* ---------- FLOW ---------- */
-  const flow = buildFlow(questions, infoScreens);
-  const currentStep = flow[currentStepIndex];
-
-  const currentQuestion: Question | null =
-  currentStep?.type === 'question' ? currentStep.question : null;
-
-  const questionIndex = flow
-  .slice(0, currentStepIndex + 1)
-  .filter((s) => s.type === 'question').length;
-
-  /* ---------- PROGRESS ---------- */
-
-const totalQuestions = flow.filter((s) => s.type === 'question').length;
-
-const { progress } = getQuestionProgress(
-  flow,
-  currentStepIndex,
-  totalQuestions
-);
-
-  /* ===================== EFFECTS ===================== */
-
-  // UTM + URL
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    setQuizUrl(window.location.href);
-
-    const params = new URLSearchParams(window.location.search);
-
-    setUtmParams({
-      utm_source: params.get('utm_source') || undefined,
-      utm_medium: params.get('utm_medium') || undefined,
-      utm_campaign: params.get('utm_campaign') || undefined,
-      utm_content: params.get('utm_content') || undefined,
-      utm_term: params.get('utm_term') || undefined,
-    });
-  }, []);
-
-  /* ===================== ANSWERS ===================== */
-
-  const setSingleAnswer = (value: string) => {
-    if (!currentQuestion) return;
+    // ❗ не даємо перевибрати
+    if (answers[questionId]) return;
 
     setAnswers((prev) => ({
       ...prev,
-      [currentQuestion.id]: value,
+      [questionId]: answer,
     }));
   };
 
-  const toggleMultipleAnswer = (value: string) => {
-    if (!currentQuestion) return;
-
-    setAnswers((prev) => {
-      const prevVal = prev[currentQuestion.id];
-      const arr = Array.isArray(prevVal) ? prevVal : [];
-      const exists = arr.includes(value);
-
-      return {
-        ...prev,
-        [currentQuestion.id]: exists
-          ? arr.filter((v) => v !== value)
-          : [...arr, value],
-      };
-    });
-  };
-
-  const setTextAnswer = (value: string) => {
-    if (!currentQuestion) return;
-
-    setAnswers((prev) => ({
-      ...prev,
-      [currentQuestion.id]: value,
-    }));
-  };
-
-  const hasAnswer = (): boolean => {
-    if (!currentQuestion) return true;
-
-    const val = answers[currentQuestion.id];
-
-    if (currentQuestion.type === 'multiple') {
-      return Array.isArray(val) && val.length > 0;
-    }
-
-    if (typeof val === 'string') {
-      return val.trim().length > 0;
-    }
-
-    return false;
-  };
-
-  /* ===================== NAVIGATION ===================== */
-
+  // далі
   const handleNext = () => {
-    if (currentStep.type === 'question' && !hasAnswer()) return;
-
-    if (currentStepIndex < flow.length - 1) {
-      setCurrentStepIndex((i) => i + 1);
-    } else {
-      setStep('contact');
+    if (currentIndex < totalQuestions - 1) {
+      setCurrentIndex((prev) => prev + 1);
     }
   };
 
-  const goPrevQuestion = () => {
-    let prevIndex = currentStepIndex - 1;
-
-    while (prevIndex >= 0 && flow[prevIndex].type !== 'question') {
-      prevIndex--;
+  // назад
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
     }
-
-    if (prevIndex < 0) return;
-
-    const prevQuestionId = (flow[prevIndex] as {
-      type: 'question';
-      question: Question;
-    }).question.id;
-
-    setAnswers((prev) => {
-      const next = { ...prev };
-      delete next[prevQuestionId];
-      return next;
-    });
-
-    setCurrentStepIndex(prevIndex);
   };
 
-  /* ===================== AUTO NEXT ===================== */
-
-  useEffect(() => {
-    if (step !== 'quiz') return;
-    if (!currentQuestion) return;
-    if (currentQuestion.type !== 'choice') return;
-    if (!hasAnswer()) return;
-
-    if (autoNextTimeout.current) {
-      clearTimeout(autoNextTimeout.current);
-    }
-
-    autoNextTimeout.current = window.setTimeout(handleNext, 500);
-
-    return () => {
-      if (autoNextTimeout.current) {
-        clearTimeout(autoNextTimeout.current);
-      }
-    };
-  }, [answers, currentStepIndex, step, currentQuestion?.type]);
-
-  /* ===================== CONTACT SUBMIT ===================== */
-
-const normalizePhone = (raw: string): string | null => {
-  const digits = raw.replace(/\D/g, '');
-
-  // якщо номер уже з 380 → приймаємо від 12 до 15 цифр
-  if (digits.startsWith('380') && digits.length >= 12 && digits.length <= 15) {
-    return digits;
-  }
-
-  // формат 0XXXXXXXXX
-  if (digits.length === 10 && digits.startsWith('0')) {
-    return '38' + digits.slice(1);
-  }
-
-  // без коду країни
-  if (digits.length >= 9 && digits.length <= 12) {
-    return '380' + digits;
-  }
-
-  return null;
-};
-
-  const handleSubmitContact = () => {
-  const name = contactForm.name.trim();
-  const city = contactForm.city.trim();
-  const phone = normalizePhone(contactForm.phone);
-
-  if (!name || !phone) return;
-
-  // 🚀 1. ПЕРЕХІД МИТТЄВО
-  setStep('result');
-
-  // 🐢 2. CRM — У ФОНІ, БЕЗ await
-  fetch('/api/submit', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      answers,
-      contact: { name, city, phone },
-      utm: utmParams,
-      quizUrl,
-    }),
-  }).catch(() => {
-    // можна логувати, але UI не чіпаємо
-    console.error('CRM submit failed');
-  });
-};
-
-
-
-  /*const handleSubmitContact = async () => {
-    const name = contactForm.name.trim();
-    const phone = normalizePhone(contactForm.phone);
-
-    if (!name || !phone) return;
-
-    setStep('loading');
-
-    try {
-      const res = await fetch('/api/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          answers,
-          contact: { name, phone },
-          utm: utmParams,
-          quizUrl,
-        }),
-      });
-
-      const data = await res.json();
-
-      setResultData(
-        data.success
-          ? data
-          : {
-              sellingText:
-                'Менеджер звʼяжеться з вами для детальнішого аналізу.',
-              video: videoDatabase[0],
-            }
-      );
-
-      setStep('result');
-    } catch {
-      setResultData({
-        sellingText: 'Технічна помилка. Ми все одно збережемо заявку.',
-        video: videoDatabase[0],
-      });
-      setStep('result');
-    }
-  }; */
-
-  /* ===================== LOADING ===================== */
-
-  const [loadingStages, setLoadingStages] = useState<LoadingStage[]>([
-    { title: 'Маркетинг', progress: 0 },
-    { title: 'Продажі', progress: 0 },
-    { title: 'Команда', progress: 0 },
-  ]);
-
-  useEffect(() => {
-    if (step !== 'loading') return;
-
-    if (!leadSentRef.current && (window as any)?.fbq) {
-      (window as any).fbq('track', 'Lead');
-      leadSentRef.current = true;
-    }
-
-    const interval = setInterval(() => {
-      setLoadingStages((prev) => {
-        const next = [...prev];
-        const idx = next.findIndex((s) => s.progress < 100);
-        if (idx === -1) return prev;
-
-        next[idx] = {
-          ...next[idx],
-          progress: Math.min(next[idx].progress + 2, 100),
-        };
-        return next;
-      });
-    }, 120);
-
-    return () => clearInterval(interval);
-  }, [step]);
-
-if (step === 'quiz' && currentStep?.type === 'info') {
-  return (
-    <InfoScreenCentered
-      title={currentStep.info.title}
-      text={currentStep.info.text}
-      imageUrl={currentStep.info.imageUrl}
-      onNext={handleNext}
-      onPrev={goPrevQuestion} 
-    />
-  );
-}
-
- // ----- QUESTION: CHOICE -----
-if (step === 'quiz' && questionIndex === 1) {
-  return (
-    <QuizLayout progress={progress}>
-      <QuestionChoiceMobile
-        progress={progress}
-        imageUrl="https://i.ibb.co/FqCjjrZZ/c44ecb5c0f2b20c1.png"
-        question={{
-          text: currentQuestion!.text,
-          subtitle: currentQuestion?.subtitle,
-          options: currentQuestion!.options ?? [],
-        }}
-        value={answers[currentQuestion!.id] as string | undefined}
-        onSelect={setSingleAnswer}
-        onNext={handleNext}
-      />
-    </QuizLayout>
-  );
-}
-
-// ----- QUESTION: MULTIPLE -----
-if (step === 'quiz' && questionIndex === 2) {
-  return (
-    <QuizLayout progress={progress}>
-      <QuestionMultipleCentered
-        progress={progress}
-        question={{
-          text: currentQuestion!.text,
-          helperText: 'Відмітьте всі, що підходять',
-          options: currentQuestion!.options ?? [],
-        }}
-        values={(answers[currentQuestion!.id] as string[]) ?? []}
-        onToggle={toggleMultipleAnswer}
-        onNext={handleNext}
-        onPrev={goPrevQuestion}
-      />
-    </QuizLayout>
-  );
-}
-
-// ----- 3-й ВАРІАНТ: choice без картинки -----
-if (step === 'quiz' && questionIndex === 3) {
-  return (
-    <QuizLayout progress={progress}>
-      <QuestionChoiceCentered
-        progress={progress}
-        question={{
-          text: currentQuestion!.text,
-          options: currentQuestion!.options ?? [],
-        }}
-        value={answers[currentQuestion!.id] as string | undefined}
-        onSelect={setSingleAnswer}
-        onNext={handleNext}
-        onPrev={goPrevQuestion}
-      />
-    </QuizLayout>
-  );
-}
-
-if (step === 'quiz' && questionIndex === 4) {
-  return (
-    <QuizLayout progress={progress}>
-      <QuestionChoiceMobile
-        progress={progress}
-        imageUrl="https://i.ibb.co/SXMCpJ34/2a35ad61862addba.jpg"
-        question={{
-          text: currentQuestion!.text,
-          subtitle: currentQuestion!.subtitle,
-          options: currentQuestion!.options ?? [],
-        }}
-        value={answers[currentQuestion!.id] as string | undefined}
-        onSelect={setSingleAnswer}
-        onNext={handleNext}
-        onPrev={goPrevQuestion}
-      />
-    </QuizLayout>
-  );
-}
-
-// ----- 3-й ВАРІАНТ: choice без картинки -----
-if (step === 'quiz' && questionIndex === 5) {
-  return (
-    <QuizLayout progress={progress}>
-      <QuestionChoiceCentered
-        progress={progress}
-        question={{
-          text: currentQuestion!.text,
-          subtitle: currentQuestion?.subtitle, // можна, а можна і ні
-          options: currentQuestion!.options ?? [],
-        }}
-        value={answers[currentQuestion!.id] as string | undefined}
-        onSelect={setSingleAnswer}
-        onNext={handleNext}
-        onPrev={goPrevQuestion}
-      />
-    </QuizLayout>
-  );
-}
-
-if (step === 'quiz' && questionIndex === 6) {
-  return (
-    <QuizLayout progress={progress}>
-      <QuestionChoiceCentered
-        progress={progress}
-        question={{
-          text: currentQuestion!.text,
-          options: currentQuestion!.options ?? [],
-        }}
-        value={answers[currentQuestion!.id] as string | undefined}
-        onSelect={setSingleAnswer}
-        onNext={handleNext}
-        onPrev={goPrevQuestion}
-      />
-    </QuizLayout>
-  );
-}
-
-if (step === 'quiz' && questionIndex === 7) {
-  return (
-    <QuizLayout progress={progress}>
-      <QuestionTextCentered
-        progress={progress}
-        question={{
-          text: currentQuestion!.text,
-          subtitle: currentQuestion?.subtitle,
-          placeholder: currentQuestion?.placeholder,
-        }}
-        value={answers[currentQuestion!.id] as string | undefined}
-        onChange={setTextAnswer}
-        onNext={handleNext}
-        onPrev={goPrevQuestion}
-      />
-    </QuizLayout>
-  );
-}
-
-if (step === 'quiz' && questionIndex === 8) {
-  return (
-    <QuizLayout progress={progress}>
-      <QuestionChoiceCentered
-        progress={progress}
-        question={{
-          text: currentQuestion!.text,
-          options: currentQuestion!.options ?? [],
-        }}
-        value={answers[currentQuestion!.id] as string | undefined}
-        onSelect={setSingleAnswer}
-        onNext={handleNext}
-        onPrev={goPrevQuestion}
-      />
-    </QuizLayout>
-  );
-}
-
-
-
-// ----- CARD CHOICE -----
-if (step === 'quiz' && questionIndex === 9) {
-  const q = cardQuestions[0];
+  const selectedAnswer = answers[currentQuestion.id] ?? null;
 
   return (
-    <QuizLayout progress={progress}>
-      <QuestionChoiceCards
-        progress={progress}
-        question={q}
-        value={answers[q.id] as string | undefined}
-        onSelect={(v) => {
-          setSingleAnswer(v);
-          setTimeout(handleNext, 300);
-        }}
-        onPrev={goPrevQuestion}
-      />
-    </QuizLayout>
+    <main className="min-h-screen bg-[#f5f5f5] px-4 py-8">
+      <div className="mx-auto flex w-full max-w-[920px] flex-col gap-6">
+        
+        {/* 🔵 ШАПКА */}
+        <QuizHeader
+          currentQuestion={currentQuestionNumber}
+          totalQuestions={totalQuestions}
+          correctCount={correctCount}
+          wrongCount={wrongCount}
+        />
+
+        {/* 🧠 КАРТКА ПИТАННЯ */}
+        <QuizQuestionCard
+          questionNumber={currentQuestionNumber}
+          totalQuestions={totalQuestions}
+          questionData={currentQuestion}
+          selectedAnswer={selectedAnswer}
+          onAnswer={handleAnswer}
+          onNext={handleNext}
+          onPrev={handlePrev}
+          isFirstQuestion={currentIndex === 0}
+          isLastQuestion={currentIndex === totalQuestions - 1}
+        />
+      </div>
+    </main>
   );
-}
-
-if (step === 'quiz' && questionIndex === 10) {
-  const q = cardQuestions[1];
-
-  return (
-    <QuizLayout progress={progress}>
-      <QuestionChoiceCards
-        progress={progress}
-        question={q}
-        value={answers[q.id] as string | undefined}
-        onSelect={(v) => {
-          setSingleAnswer(v);
-          setTimeout(handleNext, 300);
-        }}
-        onPrev={goPrevQuestion}
-      />
-    </QuizLayout>
-  );
-}
-
-if (step === 'quiz' && questionIndex === 11) {
-  return (
-    <QuizLayout progress={progress}>
-      <QuestionChoiceCentered
-        progress={progress}
-        question={{
-          text: currentQuestion!.text,
-          options: currentQuestion!.options ?? [],
-        }}
-        value={answers[currentQuestion!.id] as string | undefined}
-        onSelect={setSingleAnswer}
-        onNext={handleNext}
-        onPrev={goPrevQuestion}
-      />
-    </QuizLayout>
-  );
-}
-
-if (step === 'quiz' && questionIndex === 12) {
-  return (
-    <QuizLayout progress={progress}>
-      <QuestionChoiceCentered
-        progress={progress}
-        question={{
-          text: currentQuestion!.text,
-          options: currentQuestion!.options ?? [],
-        }}
-        value={answers[currentQuestion!.id] as string | undefined}
-        onSelect={setSingleAnswer}
-        onNext={handleNext}
-        onPrev={goPrevQuestion}
-      />
-    </QuizLayout>
-  );
-}
-
-if (step === 'quiz' && questionIndex === 13) {
-  return (
-    <QuizLayout progress={progress}>
-      <QuestionMultipleCentered
-        progress={progress}
-        question={{
-          text: currentQuestion!.text,
-          helperText: '(оберіть ті, що стосуються вас):',
-          options: currentQuestion!.options ?? [],
-        }}
-        values={(answers[currentQuestion!.id] as string[]) ?? []}
-        onToggle={toggleMultipleAnswer}
-        onNext={handleNext}
-        onPrev={goPrevQuestion}
-      />
-    </QuizLayout>
-  );
-}
-
-if (step === 'quiz' && questionIndex === 14) {
-  return (
-    <QuizLayout progress={progress}>
-      <QuestionChoiceCentered
-        progress={progress}
-        question={{
-          text: currentQuestion!.text,
-          options: currentQuestion!.options ?? [],
-        }}
-        value={answers[currentQuestion!.id] as string | undefined}
-        onSelect={setSingleAnswer}
-        onNext={handleNext}
-        onPrev={goPrevQuestion}
-      />
-    </QuizLayout>
-  );
-}
-
-if (step === 'quiz' && questionIndex === 15) {
-  return (
-    <QuizLayout progress={progress}>
-      <QuestionChoiceCentered
-        progress={progress}
-        question={{
-          text: currentQuestion!.text,
-          options: currentQuestion!.options ?? [],
-        }}
-        value={answers[currentQuestion!.id] as string | undefined}
-        onSelect={setSingleAnswer}
-        onNext={handleNext}
-        onPrev={goPrevQuestion}
-      />
-    </QuizLayout>
-  );
-}
-
-// ----- CONTACT -----
-if (step === 'contact') {
-  return (
-    <ContactRenderer
-      name={contactForm.name}
-      city={contactForm.city} // ✅ додали
-      phone={contactForm.phone}
-      onChange={(field, value) =>
-        setContactForm((p) => ({ ...p, [field]: value }))
-      }
-      onSubmit={handleSubmitContact}
-    />
-  );
-}
-
-/*// ----- LOADING -----
-if (step === 'loading') {
-  return <LoadingRenderer stages={loadingStages} />;
-}*/
-
-// ----- RESULT -----
-if (step === 'result') {
-  return <ResultStaticView />;
-}
-
-//if (step === 'result' && resultData) {
-//  return (
-//    <ResultRenderer
-//      sellingText={resultData.sellingText}
-//      video={resultData.video}
-//    />
-//  );
-//}
-
-
-// ----- FALLBACK -----
-return <div />;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type AnswerNumber = 1 | 2 | 3 | 4;
 
@@ -38,6 +38,10 @@ export default function QuizQuestionCard({
   isLastQuestion,
 }: QuizQuestionCardProps) {
   const [isHintOpen, setIsHintOpen] = useState(false);
+
+  useEffect(() => {
+    setIsHintOpen(false);
+  }, [questionData.id]);
 
   const isAnswered = selectedAnswer !== null;
 
@@ -140,9 +144,7 @@ export default function QuizQuestionCard({
           onClick={() => setIsHintOpen((prev) => !prev)}
         >
           <span>Показати підказку</span>
-          <span className={`inline-block transition ${isHintOpen ? "rotate-90" : ""}`}>
-            {">"}
-          </span>
+         <span className="inline-block text-[18px] leading-none">▾</span>
         </button>
 
         {isHintOpen && (

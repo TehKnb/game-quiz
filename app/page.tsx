@@ -66,14 +66,15 @@ export default function Page() {
   return (
     <main className="min-h-screen bg-[#f5f5f5] px-4 py-8">
       <div className="mx-auto flex w-full max-w-[920px] flex-col gap-6">
-        
         {/* 🔵 ШАПКА */}
-        <QuizHeader
-          currentQuestion={currentQuestionNumber}
-          totalQuestions={totalQuestions}
-          correctCount={correctCount}
-          wrongCount={wrongCount}
-        />
+        <div className="sticky top-[10px] z-50">
+          <QuizHeader
+            currentQuestion={currentQuestionNumber}
+            totalQuestions={totalQuestions}
+            correctCount={correctCount}
+            wrongCount={wrongCount}
+          />
+        </div>
 
         {/* 🧠 КАРТКА ПИТАННЯ */}
         <QuizQuestionCard

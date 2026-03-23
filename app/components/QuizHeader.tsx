@@ -13,22 +13,22 @@ export default function QuizHeader({
 }: QuizHeaderProps) {
   return (
     <section className="flex items-center gap-4 rounded-[16px] bg-white px-5 py-4">
-      <div className="grid flex-1 grid-cols-20 gap-1.5">
+      <div className="grid flex-1 grid-cols-20 gap-[2px]">
         {Array.from({ length: totalQuestions }, (_, index) => {
-          const questionNumber = index + 1;
-          const isActive = questionNumber === currentQuestion;
+            const questionNumber = index + 1;
+            const isActive = questionNumber === currentQuestion;
 
-          return (
+            return (
             <div
-              key={questionNumber}
-              className={[
-                "h-[14px] rounded-[4px] border-[1.5px] border-[#2f80ed]",
+                key={questionNumber}
+                className={[
+                "h-[7px] rounded-[2px] border border-[#2f80ed]",
                 isActive ? "bg-[#2f80ed]" : "bg-transparent",
-              ].join(" ")}
+                ].join(" ")}
             />
-          );
+            );
         })}
-      </div>
+        </div>
 
       <div className="whitespace-nowrap text-[16px] font-semibold text-[#1f2937]">
         {currentQuestion} з {totalQuestions}

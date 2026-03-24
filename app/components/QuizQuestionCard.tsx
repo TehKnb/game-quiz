@@ -94,7 +94,7 @@ export default function QuizQuestionCard({
               onClick={() => handleAnswerClick(answerNumber)}
               disabled={isAnswered}
               className={[
-                "w-full rounded-[18px] px-2 py-3 text-left transition sm:px-5 sm:py-5",
+                "w-full rounded-[18px] px-3 py-4 text-left transition sm:px-5 sm:py-5",
                 state === "correct"
                   ? "bg-[#dff3e5]"
                   : state === "wrong"
@@ -104,7 +104,7 @@ export default function QuizQuestionCard({
                 isAnswered ? "cursor-default" : "cursor-pointer",
               ].join(" ")}
             >
-              <div className="flex items-start gap-1.5 sm:gap-3.5">
+              <div className="flex items-start gap-0.5 sm:gap-3.5">
                 <div className="min-w-[24px] text-[16px] font-medium leading-[1.5] text-[#374151] sm:min-w-[28px] sm:text-[18px]">
                   {optionLetters[index]}
                 </div>

@@ -250,12 +250,6 @@ export default function QuizResultScreen({
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label
-                  htmlFor="name"
-                  className="mb-2 block text-[15px] font-medium text-[#374151]"
-                >
-                  Ім’я
-                </label>
                 <input
                   id="name"
                   type="text"
@@ -271,12 +265,6 @@ export default function QuizResultScreen({
               </div>
 
               <div>
-                <label
-                  htmlFor="phone"
-                  className="mb-2 block text-[15px] font-medium text-[#374151]"
-                >
-                  Телефон
-                </label>
 
                 <div className="flex gap-3">
                   <div className="flex h-[76px] min-w-[120px] items-center justify-center rounded-[18px] bg-[#eceff3] px-4 text-[18px] font-medium text-[#111827]">

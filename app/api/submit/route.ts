@@ -64,7 +64,7 @@ function buildQaFields(answers: IncomingAnswers) {
 async function sendToCRM(body: RequestBody) {
   if (!WEBHOOK_URL) {
     console.error("CRM_WEBHOOK_STATUS: FAILED (no NETHUNT_WEBHOOK_URL)");
-    return false;
+    throw new Error("Missing NETHUNT_WEBHOOK_URL");
   }
 
   const { contact, answers, quizUrl, utm } = body;
@@ -91,31 +91,29 @@ async function sendToCRM(body: RequestBody) {
 
   console.log("CRM_PAYLOAD:", payload);
 
-  try {
-    const response = await fetch(WEBHOOK_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+  const response = await fetch(WEBHOOK_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
 
-    if (!response.ok) {
-      console.error("CRM_WEBHOOK_STATUS: FAILED", response.status);
-      return false;
-    }
+  const responseText = await response.text();
+  console.log("CRM_RESPONSE_STATUS:", response.status);
+  console.log("CRM_RESPONSE_TEXT:", responseText);
 
-    console.log("CRM_WEBHOOK_STATUS: SUCCESS");
-    return true;
-  } catch (error) {
-    console.error("CRM_WEBHOOK_STATUS: FAILED", String(error));
-    return false;
+  if (!response.ok) {
+    throw new Error(`CRM webhook failed with status ${response.status}`);
   }
+
+  return true;
 }
 
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as RequestBody;
+    console.log("QUIZ_RESULT_BODY:", body);
 
     const contactName = body.contact?.name?.trim() || "";
     const phone = normalizePhoneServer(body.contact?.phone || "");
@@ -134,7 +132,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const sent = await sendToCRM({
+    await sendToCRM({
       ...body,
       contact: {
         ...body.contact,
@@ -144,18 +142,14 @@ export async function POST(request: Request) {
       },
     });
 
-    if (!sent) {
-      return NextResponse.json(
-        { ok: false, error: "CRM send failed" },
-        { status: 500 }
-      );
-    }
-
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("ROUTE_FATAL_ERROR", String(error));
+    console.error("ROUTE_FATAL_ERROR:", error);
     return NextResponse.json(
-      { ok: false, error: "Server error" },
+      {
+        ok: false,
+        error: error instanceof Error ? error.message : "Server error",
+      },
       { status: 500 }
     );
   }

@@ -177,7 +177,9 @@ export default function QuizResultScreen({
       });
 
       if (!response.ok) {
-        throw new Error("Submit failed");
+        const errorText = await response.text();
+        console.error("SUBMIT_RESPONSE_ERROR:", response.status, errorText);
+        throw new Error(`Submit failed: ${response.status}`);
       }
 
       setIsSubmitted(true);

@@ -96,6 +96,7 @@ export default function Page() {
             <QuizResultScreen
               score={correctCount}
               totalQuestions={totalQuestions}
+              answers={answers}
             />
           </div>
         )}

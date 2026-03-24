@@ -262,9 +262,7 @@ export default function QuizResultScreen({
 
           <div className="mb-6 flex justify-center">
             <div className="rounded-[18px] bg-[#111827] px-8 py-5 text-center text-white">
-              <div className="mb-1 text-[14px] uppercase tracking-[0.08em] text-white/70">
-                Таймер
-              </div>
+            
               <div className="text-[42px] font-bold leading-none sm:text-[54px]">
                 {formatTime(timeLeft)}
               </div>

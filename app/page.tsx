@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import QuizHeader from "./components/QuizHeader";
 import QuizQuestionCard from "./components/QuizQuestionCard";
+import QuizResultScreen from "./components/QuizResultScreen";
 import { quizData } from "./data";
 
 type AnswerNumber = 1 | 2 | 3 | 4;
@@ -11,6 +12,7 @@ type UserAnswers = Record<number, AnswerNumber>;
 export default function Page() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<UserAnswers>({});
+  const [isFinished, setIsFinished] = useState(false);
 
   const totalQuestions = quizData.length;
   const currentQuestion = quizData[currentIndex];
@@ -46,7 +48,11 @@ export default function Page() {
     if (currentIndex < totalQuestions - 1) {
       setCurrentIndex((prev) => prev + 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
     }
+
+    setIsFinished(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handlePrev = () => {
@@ -61,27 +67,38 @@ export default function Page() {
   return (
     <main className="min-h-screen bg-[#f5f5f5] px-4 py-2">
       <div className="mx-auto w-full max-w-[920px]">
-        <div className="pt-[5px]">
-          <QuizHeader
-            currentQuestion={currentQuestionNumber}
-            totalQuestions={totalQuestions}
-            correctCount={correctCount}
-            wrongCount={wrongCount}
-          />
-        </div>
+        {!isFinished ? (
+          <>
+            <div className="pt-[5px]">
+              <QuizHeader
+                currentQuestion={currentQuestionNumber}
+                totalQuestions={totalQuestions}
+                correctCount={correctCount}
+                wrongCount={wrongCount}
+              />
+            </div>
 
-        <div className="pt-[0px]">
-          <QuizQuestionCard
-            totalQuestions={totalQuestions}
-            questionData={currentQuestion}
-            selectedAnswer={selectedAnswer}
-            onAnswer={handleAnswer}
-            onNext={handleNext}
-            onPrev={handlePrev}
-            isFirstQuestion={currentIndex === 0}
-            isLastQuestion={currentIndex === totalQuestions - 1}
-          />
-        </div>
+            <div className="pt-[0px]">
+              <QuizQuestionCard
+                totalQuestions={totalQuestions}
+                questionData={currentQuestion}
+                selectedAnswer={selectedAnswer}
+                onAnswer={handleAnswer}
+                onNext={handleNext}
+                onPrev={handlePrev}
+                isFirstQuestion={currentIndex === 0}
+                isLastQuestion={currentIndex === totalQuestions - 1}
+              />
+            </div>
+          </>
+        ) : (
+          <div className="py-4">
+            <QuizResultScreen
+              score={correctCount}
+              totalQuestions={totalQuestions}
+            />
+          </div>
+        )}
       </div>
     </main>
   );
